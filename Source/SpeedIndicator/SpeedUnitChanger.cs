@@ -1,19 +1,19 @@
-﻿/* Copyright © 2014-2019, Eliseo Martín <lttito@gmail.com>
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Lesser General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
+﻿/*
+	This file is part of Speed Unit Changer /L Unleashed
+		© 2026 LisiasT
+		© 2014-2019 Ittito (Eliseo Martin <lttito@gmail.com>)
 
+	Speed Unit Changer /L licensed as follows:
+		* GPL 3.0 : https://www.gnu.org/licenses/gpl-3.0.txt
+
+	Speed Unit Changer /L Unleashedis distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of
+	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+
+	You should have received a copy of the GNU General Public License 3.0
+	along with Speed Unit Changer /L Unleashed.
+	If not, see <https://www.gnu.org/licenses/>.
+*/
 using System;
 using System.Collections.Generic;
 using System.Linq;

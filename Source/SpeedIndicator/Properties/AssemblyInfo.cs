@@ -8,10 +8,10 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyTitle("SpeedUnitChanger")]
 [assembly: AssemblyDescription("Simple mod to visualize speed in different units")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("lttito (Eliseo Martín)")]
-[assembly: AssemblyProduct("SpeedUnitChanger")]
-[assembly: AssemblyCopyright("Copyright © 2014-2019, Eliseo Martin. Distributed under the terms of the LGPLv3")]
-[assembly: AssemblyTrademark("")]
+[assembly: AssemblyCompany(SpeedUnitChanger.LegalMamboJambo.Company)]
+[assembly: AssemblyProduct(SpeedUnitChanger.LegalMamboJambo.Product)]
+[assembly: AssemblyCopyright(SpeedUnitChanger.LegalMamboJambo.Copyright)]
+[assembly: AssemblyTrademark(SpeedUnitChanger.LegalMamboJambo.Trademark)]
 [assembly: AssemblyCulture("")]
 
 // Si establece ComVisible como false, los tipos de este ensamblado no estarán visibles 
