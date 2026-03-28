@@ -123,7 +123,10 @@ namespace SpeedUnitChanger
         private int currentAltitudeIndication = METERS;
         private int digitsOfPrecision = 3;
         private string precisionStr = "N3";
+
         private bool showAltitude = false;
+		private bool altitudeSeaLevel = false;
+		private bool allowUnderWater = false;
         private bool showSpeed = true;
 
         private Rect ConfigurationWindow;
@@ -133,6 +136,9 @@ namespace SpeedUnitChanger
         private SpeedDisplay display;
         private float stockTitleFontSize;
         private float stockSpeedFontSize;
+
+		private Color originalDisplayColour = Color.black;
+
         /// <summary>
         /// Object contructor.
         /// </summary>
@@ -180,6 +186,8 @@ namespace SpeedUnitChanger
                 int val = Convert.ToInt32(config.GetValue("unit"));
                 bool altWin = Convert.ToBoolean(config.GetValue("alt"));
                 int altunit = Convert.ToInt32(config.GetValue("altunit"));
+				bool seaLevel = Convert.ToBoolean(config.GetValue("seaLevel"));
+				bool underWater = Convert.ToBoolean(config.GetValue("underWater"));
                 bool sSpeed = Convert.ToBoolean(config.GetValue("sSpeed"));
                 int precision = Convert.ToInt32(config.GetValue("precision"));
 
@@ -187,6 +195,8 @@ namespace SpeedUnitChanger
                 currentSpeedIndication = val;
                 showAltitude = altWin;
                 currentAltitudeIndication = altunit;
+				this.altitudeSeaLevel = seaLevel;
+				this.allowUnderWater = underWater;
                 showSpeed = sSpeed;
                 digitsOfPrecision = precision;
             }
@@ -194,6 +204,10 @@ namespace SpeedUnitChanger
             {
                 currentSpeedIndication = METERS_PER_SECOND;
                 showAltitude = false;
+                this.altitudeSeaLevel = false;
+                this.allowUnderWater = false;
+ 				this.altitudeSeaLevel = false;
+ 				this.allowUnderWater = false;
                 currentAltitudeIndication = METERS;
                 showSpeed = true;
                 digitsOfPrecision = 3;
@@ -206,6 +220,8 @@ namespace SpeedUnitChanger
             savingNode.AddValue("unit", currentSpeedIndication.ToString());
             savingNode.AddValue("alt", showAltitude.ToString());
             savingNode.AddValue("altunit", currentAltitudeIndication.ToString());
+			savingNode.AddValue("seaLevel", this.altitudeSeaLevel.ToString());
+			savingNode.AddValue("underWater", this.allowUnderWater.ToString());
             savingNode.AddValue("sSpeed", showSpeed.ToString());
             savingNode.AddValue("precision", digitsOfPrecision.ToString());
             try
@@ -239,6 +255,7 @@ namespace SpeedUnitChanger
                 {
                     stockSpeedFontSize = display.textSpeed.fontSize;
                     stockTitleFontSize = display.textTitle.fontSize;
+					this.originalDisplayColour = display.textTitle.color;
                 }
             }
 			if (this.ToolBarEnabled)
@@ -258,6 +275,8 @@ namespace SpeedUnitChanger
             showAltitude = GUILayout.Toggle(showAltitude, "Show AGL / Ap - Pe / Target Name");
             if (showAltitude)
             {
+				this.altitudeSeaLevel = GUILayout.Toggle(this.altitudeSeaLevel, "Altitude from Sea Level");
+				this.allowUnderWater = GUILayout.Toggle(this.allowUnderWater, "Depth Under Sea");
                 showSpeed = GUILayout.Toggle(showSpeed, "Show speed on Orbit Mode");
             }
             if (!showAltitude || !showSpeed)
@@ -380,7 +399,18 @@ namespace SpeedUnitChanger
 
         private void UpdateAltitudeValue(FlightGlobals.SpeedDisplayModes speedDisplayMode)
         {
-            double realAltitude = FlightGlobals.ActiveVessel.terrainAltitude > 0 ? FlightGlobals.ActiveVessel.altitude - FlightGlobals.ActiveVessel.terrainAltitude : FlightGlobals.ActiveVessel.altitude;
+			double realAltitude = FlightGlobals.ActiveVessel.altitude - FlightGlobals.ActiveVessel.terrainAltitude;
+			bool altitudeSeaLevel = this.altitudeSeaLevel && (FlightGlobals.ActiveVessel.terrainAltitude < 0 || realAltitude > 1000);
+			bool underWater = this.allowUnderWater && FlightGlobals.ActiveVessel.altitude < 0;
+			string attitude = altitudeSeaLevel ? "ASL"
+							: underWater ? "BSL"
+							: "AGL"
+						;
+			realAltitude = altitudeSeaLevel ? FlightGlobals.ActiveVessel.altitude
+							: underWater ? realAltitude
+							: FlightGlobals.ActiveVessel.terrainAltitude > 0 ? realAltitude : FlightGlobals.ActiveVessel.altitude;
+						;
+
             display.textTitle.overflowMode = TMPro.TextOverflowModes.Overflow;
             switch (speedDisplayMode)
             {
@@ -433,7 +463,8 @@ namespace SpeedUnitChanger
                     }
                     display.textTitle.fontSize = stockTitleFontSize;
                     display.textSpeed.fontSize = stockSpeedFontSize;
-                    display.textTitle.text = "AGL: " + altitudeText;
+                    display.textTitle.text = String.Format("{0}: {1}", attitude, altitudeText);
+                    display.textTitle.color = underWater ? Color.red : this.originalDisplayColour;
                     break;
                 case FlightGlobals.SpeedDisplayModes.Orbit:
                     display.textTitle.enableWordWrapping = false;
