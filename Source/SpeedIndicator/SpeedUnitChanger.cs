@@ -15,13 +15,13 @@
 	If not, see <https://www.gnu.org/licenses/>.
 */
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using UnityEngine;
-//using System.Threading.Tasks;
-using KSP.IO;
+
 using KSP.UI.Screens.Flight;
+
+using GUI = KSPe.UI.GUI;
+using GUILayout = KSPe.UI.GUILayout;
+using TBUI = SpeedUnitChanger.UI;
 
 namespace SpeedUnitChanger
 {
@@ -31,7 +31,7 @@ namespace SpeedUnitChanger
         /// <summary>
         /// config file path
         /// </summary>
-        private static readonly string CONFIG_FILE = KSPUtil.ApplicationRootPath + "GameData/SpeedUnitChanger/settings.dat";
+        private const string CONFIG_NAME = "Settings";
 
         #region ENUMs
         enum SpeedUnits { MetersPerSecond = 0, KilometersPerHour = 1, MilesPerHour = 2, Knots = 3, FeetPerSecond = 4, Mach = 5};
@@ -110,7 +110,7 @@ namespace SpeedUnitChanger
         /// <summary>
         /// Flag for toolbar
         /// </summary>
-        public static bool ToolBarEnabled = false;
+        internal bool ToolBarEnabled = false;
 
         /// <summary>
         /// App variables.
@@ -125,7 +125,7 @@ namespace SpeedUnitChanger
         private string precisionStr = "N3";
         private bool showAltitude = false;
         private bool showSpeed = true;
-        private ConfigNode config;
+
         private Rect ConfigurationWindow;
         private string[] content;
         private string[] altitudeUnitNames;
@@ -155,8 +155,8 @@ namespace SpeedUnitChanger
             altitudeUnitNames[FEET] = "Feet (ft)";
             for (int i = 0; i < 4; i++)
                 digitsOfPrecisionStr[i] = i.ToString();
-            
 
+            TBUI.ToolbarController.Instance.Create(this);
         }
 
         /// <summary>
@@ -164,25 +164,19 @@ namespace SpeedUnitChanger
         /// </summary>
         void OnDestroy()
         {
-            //Nothing to Destroy
+            TBUI.ToolbarController.Instance.Destroy();
             SaveSettings();
             Destroy(this);
-        }
-
-        /// <summary>
-        /// Prints a message in the debug console
-        /// </summary>
-        /// <param name="text">text to print</param>
-        public static void DebugMessage(string text, string stackTrace = null)
-        {
-            print("Speed Unit Changer mod: " + text + stackTrace != null ? stackTrace : "");
         }
 
         private void loadConfig()
         {
             try
             {
-                config = ConfigNode.Load(CONFIG_FILE);
+				KSPe.IO.Save<Startup>.ConfigNode configNode = KSPe.IO.Save<Startup>.ConfigNode.For(CONFIG_NAME);
+				configNode.Load();
+				ConfigNode config = configNode.Node;
+
                 int val = Convert.ToInt32(config.GetValue("unit"));
                 bool altWin = Convert.ToBoolean(config.GetValue("alt"));
                 int altunit = Convert.ToInt32(config.GetValue("altunit"));
@@ -208,7 +202,7 @@ namespace SpeedUnitChanger
 
         private void SaveSettings()
         {
-            ConfigNode savingNode = new ConfigNode();
+            ConfigNode savingNode = new ConfigNode(CONFIG_NAME);
             savingNode.AddValue("unit", currentSpeedIndication.ToString());
             savingNode.AddValue("alt", showAltitude.ToString());
             savingNode.AddValue("altunit", currentAltitudeIndication.ToString());
@@ -216,11 +210,12 @@ namespace SpeedUnitChanger
             savingNode.AddValue("precision", digitsOfPrecision.ToString());
             try
             {
-                savingNode.Save(CONFIG_FILE);
+                KSPe.IO.Save<Startup>.ConfigNode configNode = KSPe.IO.Save<Startup>.ConfigNode.For(CONFIG_NAME);
+                configNode.Save(savingNode);
             }
             catch (Exception ex)
             {
-                SpeedUnitChanger.DebugMessage(ex.Message + "IN Saving configuration file");
+                Log.error(ex, "{0} IN Saving configuration file", ex.Message);
             }
         }
 
@@ -246,7 +241,7 @@ namespace SpeedUnitChanger
                     stockTitleFontSize = display.textTitle.fontSize;
                 }
             }
-            if (ToolBarEnabled)
+			if (this.ToolBarEnabled)
             {
                 ConfigurationWindow = GUILayout.Window(100, ConfigurationWindow, OnWindow, "Speed Unit Changer", HighLogic.Skin.window);
             }
