@@ -3,9 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
 VisualStudioVersion = 14.0.24720.0
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SpeedUnitChanger", "SpeedIndicator\SpeedUnitChanger.csproj", "{80E85F19-EE96-40B9-96A8-13565305A36C}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SpeedUnitChanger", "Source\SpeedIndicator\SpeedUnitChanger.csproj", "{80E85F19-EE96-40B9-96A8-13565305A36C}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Textures", "Textures", "{1254D0E9-BD5B-485F-A3A8-11BCBA622426}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Textures", "Source\Textures", "{1254D0E9-BD5B-485F-A3A8-11BCBA622426}"
 	ProjectSection(SolutionItems) = preProject
 		Textures\iconToolbar.png = Textures\iconToolbar.png
 	EndProjectSection
