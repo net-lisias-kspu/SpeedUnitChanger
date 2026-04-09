@@ -22,11 +22,12 @@ using KSP.UI.Screens.Flight;
 using GUI = KSPe.UI.GUI;
 using GUILayout = KSPe.UI.GUILayout;
 using TBUI = SpeedUnitChanger.UI;
+using KSPe.IO;
 
 namespace SpeedUnitChanger
 {
     [KSPAddon(KSPAddon.Startup.Flight, false)]
-    public class SpeedUnitChanger : MonoBehaviour
+    public class SpeedUnitChanger : MonoBehaviour, SaveGameMonitor.SaveGameLoadedListener
     {
         /// <summary>
         /// config file path
@@ -138,6 +139,7 @@ namespace SpeedUnitChanger
         private float stockSpeedFontSize;
 
 		private Color originalDisplayColour = Color.black;
+		private string savegameName = null;
 
         /// <summary>
         /// Object contructor.
@@ -175,8 +177,18 @@ namespace SpeedUnitChanger
             Destroy(this);
         }
 
-        private void loadConfig()
+		private void loadConfig()
+		{
+			if (SaveGameMonitor.Instance.IsValid)
+				(this as SaveGameMonitor.SaveGameLoadedListener).OnSaveGameLoaded(this.savegameName);
+			else
+				SaveGameMonitor.Instance.AddSingleShot(this);
+		}
+
+		void SaveGameMonitor.SaveGameLoadedListener.OnSaveGameClosed() { }
+		void SaveGameMonitor.SaveGameLoadedListener.OnSaveGameLoaded(string name)
         {
+			this.savegameName = name;
             try
             {
 				KSPe.IO.Save<Startup>.ConfigNode configNode = KSPe.IO.Save<Startup>.ConfigNode.For(CONFIG_NAME);
