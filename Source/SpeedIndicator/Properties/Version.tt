@@ -86,9 +86,9 @@ namespace <#= PROJECT_NAME #>
 		public const string Vendor = "net.lisias.ksp";
 		public const string FriendlyName = "Speed Unit Changer";
 #if DEBUG
-        public const string Text = Number + " /L BETA DEBUG";
+        public const string Text = Number + " /L Unleashed DEBUG";
 #else
-        public const string Text = Number + " /L BETA";
+        public const string Text = Number + " /L Unleashed";
 #endif
 	}
 }
